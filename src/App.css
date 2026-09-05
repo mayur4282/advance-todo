@@ -64,7 +64,16 @@
 .deadline-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.deadline-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 130px;
 }
 
 .deadline-label {

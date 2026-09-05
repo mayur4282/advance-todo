@@ -19,7 +19,8 @@ export default function TodoList() {
     }
   ]);
   const [newTodo, setNewTodo] = useState("");
-  const [deadline, setDeadline] = useState("");
+  const [deadlineDate, setDeadlineDate] = useState("");
+  const [deadlineTime, setDeadlineTime] = useState("");
   const [error, setError] = useState("");
 
   const addNewTask = (e) => {
@@ -32,6 +33,16 @@ export default function TodoList() {
     const now = new Date();
     const formattedCreated = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
+    let formattedDeadline = "";
+    let rawDeadlineVal = "";
+
+    if (deadlineDate) {
+      const timePart = deadlineTime || "23:59";
+      rawDeadlineVal = `${deadlineDate}T${timePart}`;
+      const deadlineObj = new Date(rawDeadlineVal);
+      formattedDeadline = deadlineObj.toLocaleString([], { dateStyle: 'short', timeStyle: 'short' });
+    }
+
     setTodos((prevTodos) => [
       ...prevTodos,
       {
@@ -39,12 +50,13 @@ export default function TodoList() {
         id: uuidv4(),
         isDone: false,
         createdAt: formattedCreated,
-        deadline: deadline ? new Date(deadline).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : "",
-        rawDeadline: deadline
+        deadline: formattedDeadline,
+        rawDeadline: rawDeadlineVal
       }
     ]);
     setNewTodo("");
-    setDeadline("");
+    setDeadlineDate("");
+    setDeadlineTime("");
     setError("");
   };
 
@@ -100,13 +112,24 @@ export default function TodoList() {
         </div>
 
         <div className="deadline-row">
-          <span className="deadline-label">⏱️ Deadline:</span>
-          <input
-            type="datetime-local"
-            className="deadline-input"
-            value={deadline}
-            onChange={(e) => setDeadline(e.target.value)}
-          />
+          <div className="deadline-field">
+            <span className="deadline-label"> Date:</span>
+            <input
+              type="date"
+              className="deadline-input"
+              value={deadlineDate}
+              onChange={(e) => setDeadlineDate(e.target.value)}
+            />
+          </div>
+          <div className="deadline-field">
+            <span className="deadline-label"> Time:</span>
+            <input
+              type="time"
+              className="deadline-input"
+              value={deadlineTime}
+              onChange={(e) => setDeadlineTime(e.target.value)}
+            />
+          </div>
         </div>
       </form>
 
@@ -172,7 +195,7 @@ export default function TodoList() {
                   onClick={() => deleteTodo(todo.id)}
                   title="Delete task"
                 >
-                  <span>🗑️</span> Delete
+                  Delete
                 </button>
               </li>
             );
